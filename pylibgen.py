@@ -10,7 +10,7 @@ from settings import *
 
 def getSearchResults(term, page, column):
     params = urlencode({'req': term, 'column': column, 'page': page})
-    url = 'http://libgen.io/search.php?&%s' % params
+    url = 'http://libgen.is/search.php?&%s' % params
 
     source = request.urlopen(url)
     soup = BeautifulSoup(source, 'lxml')
@@ -50,8 +50,8 @@ def formatBooks(books, page):
             size = book_attrs[7].text
             ext = book_attrs[8].text
             mirror_list = {}  # Dictionary of all the four mirrors
-            for i in range(10, 15):
-                mirror = i - 10
+            for i in range(9, 14):
+                mirror = i - 9
                 if book_attrs[i].a:
                     mirror_list[mirror] = book_attrs[i].a.attrs['href']
 
@@ -102,9 +102,9 @@ def selectBook(books, mirrors, page, n_books):
                     number_of_mirrors = len(mirrors[choice]['mirrors'])
                     print_list = (
                         "#1: Mirror bookdescr.org (default)",
-                        "#2: Mirror libgen.me",
-                        "#3: Mirror library1.org",
-                        "#4: Mirror b-ok.cc",
+                        "#2: Mirror libgen.lc",
+                        "#3: Mirror b-ok.cc",
+                        "#4: Mirror libgen.pw",
                         "#5: Mirror bookfi.net")
 
                     while SHOW_MIRRORS:
@@ -200,11 +200,12 @@ class DownloadBook():
         req = request.Request(link, headers=DownloadBook.headers)
         source = request.urlopen(req)
         soup = BeautifulSoup(source, 'lxml')
+        mother_url = "http://93.174.95.29"
 
         for a in soup.find_all('a'):
             if a.text == 'Libgen':
                 download_url = a.attrs['href']
-                DownloadBook.save_book(download_url, filename)
+                DownloadBook.save_book(mother_url + download_url, filename)
 
 
     def second_mirror(link, filename):
@@ -213,38 +214,37 @@ class DownloadBook():
         req = request.Request(link, headers=DownloadBook.headers)
         source = request.urlopen(req)
         soup = BeautifulSoup(source, 'lxml')
-        mother_url = "https://libgen.me"
 
         for a in soup.find_all('a'):
-            if a.text == 'Get from vault':
-                next_link = a.attrs['href']
-                next_req = request.Request(mother_url + next_link, headers=DownloadBook.headers)
-                next_source = request.urlopen(next_req)
-                next_soup = BeautifulSoup(next_source, 'lxml')
-                for next_a in next_soup.find_all('a'):
-                    if next_a.text == 'Get':
-                        item_url = next_a.attrs['href']
-                        DownloadBook.save_book(item_url, filename)
+			if a.text == 'GET':
+				downloadUrl = a.attrs['href']
+				DownloadBook.saveBook(motherUrl + downloadUrl, filename)
 
     def third_mirror(link, filename):
         '''This is the third mirror to download.
-        The base of this mirror is http://library1.org'''
-        req = request.Request(link, headers=DownloadBook.headers)
-        source = request.urlopen(req)
-        soup = BeautifulSoup(source, 'lxml')
-
-        for a in soup.find_all('a'):
-            if a.text == 'GET':
-                download_url = a.attrs['href']
-                DownloadBook.save_book(download_url, filename)
-
-    def fourth_mirror(link, filename):
-        '''This is the fourth mirror to download.
         The base of this mirror is https://b-ok.cc'''
         req = request.Request(link, headers=DownloadBook.headers)
         source = request.urlopen(req)
         soup = BeautifulSoup(source, 'lxml')
-        mother_url = "https://b-ok.cc"
+        motherUrl = "https://b-ok.cc"
+		mLink = soup.find(attrs={"style": "text-decoration: underline;"})
+
+        nextLink = mLink.attrs['href']
+		nextReq = request.Request(motherUrl + nextLink, headers=DownloadBook.headers)
+		nextSource = request.urlopen(nextReq)
+		nextSoup = BeautifulSoup(nextSource, 'lxml')
+		for next_a in nextSoup.find_all('a'):
+			if ' Download  ' in next_a.text:
+				item_url = next_a.attrs['href']
+				DownloadBook.saveBook(motherUrl + item_url, filename)
+
+    def fourth_mirror(link, filename):
+        '''This is the fourth mirror to download.
+        The base of this mirror is https://libgen.pw'''
+        req = request.Request(link, headers=DownloadBook.headers)
+        source = request.urlopen(req)
+        soup = BeautifulSoup(source, 'lxml')
+        motherUrl = "https://libgen.pw"
 
         for a in soup.find_all('a'):
             if a.text == 'DOWNLOAD':
