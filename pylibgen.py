@@ -10,7 +10,7 @@ from settings import *
 
 def getSearchResults(term, page, column):
 	params = urlencode({'req': term, 'column': column, 'page': page})
-	url = 'http://libgen.is/search.php?&%s' % params
+	url = 'https://libgen.is/search.php?&%s' % params
 
 	source = request.urlopen(url)
 	soup = BeautifulSoup(source, 'lxml')
