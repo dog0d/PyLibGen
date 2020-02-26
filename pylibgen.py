@@ -226,17 +226,17 @@ class DownloadBook():
 		req = request.Request(link, headers=DownloadBook.headers)
 		source = request.urlopen(req)
 		soup = BeautifulSoup(source, 'lxml')
-		motherUrl = "https://b-ok.cc"
-		mLink = soup.find(attrs={"style": "text-decoration: underline;"})
+		mother_url = "https://b-ok.cc"
+		m_link = soup.find(attrs={"style": "text-decoration: underline;"})
 
 		nextLink = mLink.attrs['href']
-		nextReq = request.Request(motherUrl + nextLink, headers=DownloadBook.headers)
+		nextReq = request.Request(mother_url + nextLink, headers=DownloadBook.headers)
 		nextSource = request.urlopen(nextReq)
 		nextSoup = BeautifulSoup(nextSource, 'lxml')
 		for next_a in nextSoup.find_all('a'):
 			if ' Download  ' in next_a.text:
 				item_url = next_a.attrs['href']
-				DownloadBook.saveBook(motherUrl + item_url, filename)
+				DownloadBook.saveBook(mother_url + item_url, filename)
 
 	def fourth_mirror(link, filename):
 		'''This is the fourth mirror to download.
@@ -244,7 +244,7 @@ class DownloadBook():
 		req = request.Request(link, headers=DownloadBook.headers)
 		source = request.urlopen(req)
 		soup = BeautifulSoup(source, 'lxml')
-		motherUrl = "https://libgen.pw"
+		mother_url = "https://libgen.pw"
 
 		for a in soup.find_all('a'):
 			if a.text == 'DOWNLOAD':
@@ -288,9 +288,9 @@ if __name__ == '__main__':
 
 	search_term = ' '.join(args.search)
 	search_arguments = [(args.title, 'title'),
-						(args.author, 'author'),
-						(args.publisher, 'publisher'),
-						(args.year, 'year')]
+			    (args.author, 'author'),
+			    (args.publisher, 'publisher'),
+			    (args.year, 'year')]
 
 	sel_column = 'def'
 	for arg in search_arguments:
