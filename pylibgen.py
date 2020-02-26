@@ -216,9 +216,9 @@ class DownloadBook():
         soup = BeautifulSoup(source, 'lxml')
 
         for a in soup.find_all('a'):
-			if a.text == 'GET':
-				downloadUrl = a.attrs['href']
-				DownloadBook.saveBook(motherUrl + downloadUrl, filename)
+		if a.text == 'GET':
+			downloadUrl = a.attrs['href']
+			DownloadBook.saveBook(motherUrl + downloadUrl, filename)
 
     def third_mirror(link, filename):
         '''This is the third mirror to download.
